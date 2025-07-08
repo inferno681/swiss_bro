@@ -1,0 +1,8 @@
+UNAUTHORIZED_ACCESS_LOG = 'Unauthorized access attempt by user ID: %s'
+BOT_STOPPED_LOG = 'Bot stopped by user'
+REDIS_GROUP_CREATED_LOG = 'Redis group created successfully'
+MESSAGE_SENT_ERROR_LOG = 'Message sent error to user %s: %s'
+MESSAGE_PROCESSING_ERROR_LOG = 'Error processing message %s: %s'
+REDIS_STREAM_ERROR_LOG = 'Redis Stream error: %s'
+CLIENT_INITIALIZED_LOG = 'APIClient initialized with base URL: %s'
+RESPONSE_MESSAGE_LOG = 'Response message: %s'

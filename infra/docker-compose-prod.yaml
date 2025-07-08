@@ -1,0 +1,12 @@
+services:
+
+  swiss_bro_bot:
+    container_name: swiss_bro_bot
+    image: inferno681/swiss_bro_bot:latest
+    restart: always
+    volumes:
+      - ./config.yaml:/app/src/config/config.yaml
+    env_file:
+      - .env
+    ports:
+      - 9060:8000

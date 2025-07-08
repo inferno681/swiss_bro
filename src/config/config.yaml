@@ -1,0 +1,17 @@
+service:
+  webhook: false
+  web_server_host: "0.0.0.0"
+  web_server_port: 8000
+  webhook_path: /webhook
+  base_webhook_url: "https://swiss-bro.ddns.net"
+  page_size: 10
+
+  admins:
+    - 459335857
+    - 5285825703
+
+mongodb:
+  host: "swissbro.y9tkger.mongodb.net"
+  port: 27017
+  db: "swiss_bro"
+  collection: "prices"
