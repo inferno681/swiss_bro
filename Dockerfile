@@ -12,17 +12,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_PROJECT_ENVIRONMENT=/usr/local
 
-ENV PYTHONDONTWRITEBYTECODE=1
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-RUN pip install --no-cache-dir poetry
+COPY pyproject.toml uv.lock* /app/
 
-COPY pyproject.toml poetry.lock* /app/
+RUN uv sync --no-dev --frozen --no-cache
 
-RUN poetry config virtualenvs.create false
-
-RUN poetry install --only main --no-interaction --no-ansi --no-root
+RUN uv pip install --no-deps --system .
 
 RUN playwright install
 
@@ -33,5 +33,6 @@ COPY ./src/config  ./src/config
 COPY ./src/bot  ./src/bot
 
 ENV PYTHONPATH=/app/src/
+RUN python -m site
 
 CMD ["python", "src/bot/main.py"]

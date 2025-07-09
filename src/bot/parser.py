@@ -5,6 +5,10 @@ from playwright.async_api import async_playwright
 
 log = getLogger(__name__)
 
+PRICE_SELECTORS = {
+    'https://www.toppreise.ch': 'div.Plugin_Price',
+}
+
 
 async def fetch_page_source(url: str) -> str:
     async with async_playwright() as playwright:
@@ -25,9 +29,7 @@ async def fetch_page_source(url: str) -> str:
 
         try:
             await page.goto(url, timeout=30000)
-            await page.wait_for_selector(
-                'div.Plugin_Price', state='attached', timeout=10000
-            )
+            await page.wait_for_timeout(3000)
             html = await page.content()
         except Exception as exc:
             log.error('Ошибка при загрузке: %s', exc)
@@ -36,15 +38,25 @@ async def fetch_page_source(url: str) -> str:
         return html
 
 
-def extract_price(html: str) -> str | None:
+def extract_price(html: str, selector: str) -> str | None:
     soup = BeautifulSoup(html, 'lxml')
-    div = soup.find('div', class_='Plugin_Price')
-    if div:
-        return div.text.strip()
+    element = soup.select_one(selector)
+    if element:
+        return element.get_text(strip=True)
+    log.warning('Price element not found for selector: %s', selector)
     return None
 
 
 async def get_price(url: str) -> str | None:
+    selector = None
+    for prefix, css_selector in PRICE_SELECTORS.items():
+        if url.startswith(prefix):
+            selector = css_selector
+            break
+
+    if selector is None:
+        log.error('No price selector configured for URL: %s', url)
+        return None
+
     html = await fetch_page_source(url)
-    price = extract_price(html)
-    return price
+    return extract_price(html, selector)
