@@ -3,11 +3,29 @@ from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from logging import getLogger
 
+from aiogram import Bot
 from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pymongo import MongoClient
-from aiogram import Bot
+
+from bot.constants import JOB_ID, UPDATE_PRICE_MESSAGE
 from bot.db import mongo
+from bot.log_message import (
+    DECIMAL_ERROR_LOG,
+    DOCUMENT_UPDATE_ERROR_LOG,
+    GET_PRICE_ERROR_LOG,
+    JOB_ADDED_LOG,
+    JOB_EXISTS_LOG,
+    MESSAGE_SEND_ERROR_LOG,
+    PRICE_NOT_CHANGED_LOG,
+    PRICE_NOT_FOUND_ERROR_LOG,
+    PRICE_UPDATED_LOG,
+    PRODUCT_LIST_NOT_RECEIVED_LOG,
+    PRODUCT_UPDATE_RESULT_LOG,
+    SCHEDULER_START_FAILED_LOG,
+    SCHEDULER_START_LOG,
+    START_PRICE_UPDATE_LOG,
+)
 from bot.parser import get_price
 from config import config
 
@@ -18,6 +36,7 @@ bot: Bot | None = None
 
 
 def set_bot(bot_instance: Bot):
+    """Set bot globally."""
     global bot
     bot = bot_instance
 
@@ -31,19 +50,22 @@ jobstores = {
 }
 scheduler = AsyncIOScheduler(jobstores=jobstores)
 
-JOB_ID = 'update_prices_job'
-
 
 async def update_single_product(product: dict) -> bool:
+    """Update single product method."""
     url = product['url']
     try:
-        new_price_row = await asyncio.wait_for(get_price(url), timeout=10)
+        price_info = await asyncio.wait_for(get_price(url), timeout=10)
+        if price_info is None:
+            log.warning(PRICE_NOT_FOUND_ERROR_LOG, url)
+            return False
+        new_price_row = price_info[0]
     except Exception as exc:
-        log.error(f'Ошибка при получении цены для {url}: {exc}')
+        log.error(GET_PRICE_ERROR_LOG, url, exc)
         return False
 
     if new_price_row is None:
-        log.warning(f'Цена не найдена для {url}')
+        log.warning(PRICE_NOT_FOUND_ERROR_LOG, url)
         return False
 
     try:
@@ -52,10 +74,10 @@ async def update_single_product(product: dict) -> bool:
         min_price = Decimal(product.get('min_price', new_price))
         max_price = Decimal(product.get('max_price', new_price))
     except (InvalidOperation, TypeError, ValueError) as exc:
-        log.error(f'Ошибка приведения цены к Decimal для {url}: {exc}')
+        log.error(DECIMAL_ERROR_LOG, url, exc)
         return False
 
-    update = {}
+    update: dict = {}
     if new_price < min_price:
         update['min_price'] = str(new_price)
     if new_price > max_price:
@@ -66,42 +88,54 @@ async def update_single_product(product: dict) -> bool:
     if update:
         update['updated_at'] = datetime.now(timezone.utc)
         try:
-            await mongo.update_document(url, update)
-            log.info(f'Цена обновлена для {url}: {new_price}')
-            if bot:
+            document = await mongo.update_document(url, update)
+            log.info(PRICE_UPDATED_LOG, url, new_price)
+            if bot and document and product.get('telegram_id'):
+                updated_price = (
+                    f'{document['new_price']} {document['currency']}'
+                )
                 try:
                     await bot.send_message(
                         chat_id=product['telegram_id'],
-                        text=f'💰 Цена на <b>{product["name"]}</b> обновилась: {new_price}',
+                        text=UPDATE_PRICE_MESSAGE.format(
+                            product=document['name'],
+                            new_price=updated_price,
+                            min_price=document['min_price'],
+                            max_price=document['max_price'],
+                            created_at=document['created_at'].strftime(
+                                '%d.%m.%Y %H:%M'
+                            ),
+                            updated_at=document['updated_at'].strftime(
+                                '%d.%m.%Y %H:%M'
+                            ),
+                        ),
                         parse_mode='HTML',
                     )
                 except Exception as exc:
-                    log.error(f'Ошибка при отправке сообщения: {exc}')
+                    log.error(MESSAGE_SEND_ERROR_LOG, exc)
             return True
         except Exception as exc:
-            log.error(f'Ошибка при обновлении документа {url}: {exc}')
+            log.error(DOCUMENT_UPDATE_ERROR_LOG, url, exc)
             return False
     else:
-        log.info(f'Цена не изменилась для {url}')
+        log.info(PRICE_NOT_CHANGED_LOG, url)
         return False
 
 
 async def update_prices_job():
-    log.info("🚀 Starting price update job...")
+    """Price update job."""
+    log.info(START_PRICE_UPDATE_LOG)
 
     products = await mongo.get_all_documents()
     if not products:
-        log.error('Could not get product list from the database.')
+        log.error(PRODUCT_LIST_NOT_RECEIVED_LOG)
         return
 
     tasks = [update_single_product(product) for product in products]
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     success_count = sum(1 for result in results if result is True)
-    log.info(
-        '✅ Update job finished. Successfully updated '
-        f'{success_count}/{len(products)} products.'
-    )
+    log.info(PRODUCT_UPDATE_RESULT_LOG, success_count, len(products))
 
 
 async def start_scheduler():
@@ -109,9 +143,9 @@ async def start_scheduler():
     try:
         if not scheduler.running:
             scheduler.start()
-            log.info("Scheduler started successfully.")
+            log.info(SCHEDULER_START_LOG)
         if scheduler.get_job(JOB_ID):
-            log.info(f'Задача {JOB_ID} уже существует, не добавляю повторно.')
+            log.info(JOB_EXISTS_LOG, JOB_ID)
         else:
             scheduler.add_job(
                 update_prices_job,
@@ -120,6 +154,6 @@ async def start_scheduler():
                 id=JOB_ID,
                 replace_existing=False,
             )
-            log.info(f'Задача {JOB_ID} добавлена в планировщик.')
+            log.info(JOB_ADDED_LOG, JOB_ID)
     except Exception as exc:
-        log.error(f"Failed to start scheduler: {exc}")
+        log.error(SCHEDULER_START_FAILED_LOG, exc)

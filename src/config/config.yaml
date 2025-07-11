@@ -5,6 +5,8 @@ service:
   webhook_path: /webhook
   base_webhook_url: "https://swiss-bro.ddns.net"
   page_size: 10
+  goto_timeout: 30000
+  wait_timeout: 3000
 
   admins:
     - 459335857

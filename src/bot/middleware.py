@@ -8,7 +8,10 @@ from bot.log_message import UNAUTHORIZED_ACCESS_LOG
 
 
 class AdminOnlyMiddleware(BaseMiddleware):
+    """Check admins ids middleware."""
+
     def __init__(self, admin_ids: set[int]):
+        """Class constructor."""
         self.admin_ids = admin_ids
         self.log = getLogger(__name__)
 
@@ -18,6 +21,7 @@ class AdminOnlyMiddleware(BaseMiddleware):
         event: TelegramObject,
         data: Dict[str, Any],
     ) -> Any:
+        """Async call method."""
         user = getattr(event, 'from_user', None)
         if user and user.id in self.admin_ids:
             return await handler(event, data)

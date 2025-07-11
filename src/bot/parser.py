@@ -1,13 +1,24 @@
 from logging import getLogger
+from types import MappingProxyType
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 
+from bot.log_message import (
+    NO_SELECTOR_ERROR_LOG,
+    PAGE_LOAD_ERROR_LOG,
+    PRICE_NOT_FOUND_ERROR_LOG,
+)
+from config import config
+
 log = getLogger(__name__)
 
-PRICE_SELECTORS = {
-    'https://www.toppreise.ch': 'div.Plugin_Price',
-}
+PRICE_SELECTORS = MappingProxyType(
+    {
+        'toppreise.ch': ('div.Plugin_Price', 'CHF'),
+    }
+)
 
 
 async def fetch_page_source(url: str) -> str:
@@ -28,11 +39,11 @@ async def fetch_page_source(url: str) -> str:
         page = await context.new_page()
 
         try:
-            await page.goto(url, timeout=30000)
-            await page.wait_for_timeout(3000)
+            await page.goto(url, timeout=config.service.goto_timeout)
+            await page.wait_for_timeout(config.service.wait_timeout)
             html = await page.content()
         except Exception as exc:
-            log.error('Ошибка при загрузке: %s', exc)
+            log.error(PAGE_LOAD_ERROR_LOG, exc)
             html = ''
         await browser.close()
         return html
@@ -43,20 +54,21 @@ def extract_price(html: str, selector: str) -> str | None:
     element = soup.select_one(selector)
     if element:
         return element.get_text(strip=True)
-    log.warning('Price element not found for selector: %s', selector)
+    log.warning(PAGE_LOAD_ERROR_LOG, selector)
     return None
 
 
-async def get_price(url: str) -> str | None:
-    selector = None
-    for prefix, css_selector in PRICE_SELECTORS.items():
-        if url.startswith(prefix):
-            selector = css_selector
-            break
-
-    if selector is None:
-        log.error('No price selector configured for URL: %s', url)
+async def get_price(url: str) -> tuple[str, str] | None:
+    domain = urlparse(url).hostname or ''
+    selector_info = PRICE_SELECTORS.get(domain.removeprefix('www.'))
+    if selector_info is None:
+        log.error(NO_SELECTOR_ERROR_LOG, url)
         return None
 
     html = await fetch_page_source(url)
-    return extract_price(html, selector)
+    price = extract_price(html, selector_info[0])
+
+    if price is None:
+        log.warning(PRICE_NOT_FOUND_ERROR_LOG, url)
+        return None
+    return price, selector_info[1]

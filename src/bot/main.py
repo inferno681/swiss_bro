@@ -14,7 +14,7 @@ from aiohttp import web
 from bot.handler import router
 from bot.log_message import BOT_STOPPED_LOG
 from bot.middleware import AdminOnlyMiddleware
-from bot.scheduller import start_scheduler, set_bot
+from bot.scheduller import set_bot, start_scheduler
 from config import config
 
 

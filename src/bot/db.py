@@ -1,5 +1,5 @@
 from bson import ObjectId
-from pymongo import AsyncMongoClient
+from pymongo import AsyncMongoClient, ReturnDocument
 from pymongo.errors import DuplicateKeyError
 
 from config import config
@@ -45,9 +45,13 @@ class MongoDB:
             return False
         return True
 
-    async def update_document(self, url: str, update: dict) -> None:
+    async def update_document(self, url: str, update: dict) -> dict | None:
         """Update an existing document by URL."""
-        await self.collection.update_one({'url': url}, {'$set': update})
+        return await self.collection.find_one_and_update(
+            {'url': url},
+            {'$set': update},
+            return_document=ReturnDocument.AFTER,
+        )
 
     async def get_all_documents(
         self, telegram_id: int | None = None

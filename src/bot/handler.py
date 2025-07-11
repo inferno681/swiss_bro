@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+
 from aiogram import F, Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
@@ -99,7 +100,7 @@ async def process_name(message: Message, state: FSMContext) -> None:
         await state.clear()
         return
 
-    price = await get_price(url)
+    price_info = await get_price(url)
     if not message.from_user:
         await message.answer(
             ERROR_MESSAGE,
@@ -108,7 +109,8 @@ async def process_name(message: Message, state: FSMContext) -> None:
         await state.clear()
         return
 
-    if price:
+    if price_info:
+        price, currency = price_info
         good_info = BaseScheme(
             telegram_id=message.from_user.id,
             url=url,
@@ -116,12 +118,15 @@ async def process_name(message: Message, state: FSMContext) -> None:
             price=price,
             min_price=price,
             max_price=price,
+            currency=currency,
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
         )
         if await mongo.insert_document(good_info.model_dump()):
             await message.answer(
-                GOOD_ADDED_MESSAGE.format(name=name, price=price),
+                GOOD_ADDED_MESSAGE.format(
+                    name=name, price=f'{price} {currency}'
+                ),
                 reply_markup=main_kb,
             )
         else:
