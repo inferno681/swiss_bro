@@ -4,6 +4,8 @@ service:
   web_server_port: 8000
   webhook_path: /webhook
   base_webhook_url: "https://swiss-bro.ddns.net"
+  currency_rate_source: https://www.cbr.ru/scripts/XML_daily.asp
+  rate_data_ttl: 960
   page_size: 10
   goto_timeout: 30000
   wait_timeout: 3000

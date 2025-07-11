@@ -9,6 +9,7 @@ from bot.constants import (
     ADD_GOOD,
     CANCEL,
     CHECK_GOODS,
+    CHECK_ONE,
     DELETE_GOOD,
     MAIN_KB_PLACEHOLDER,
     NEXT_PAGE_BUTTON,
@@ -17,11 +18,8 @@ from bot.constants import (
 
 main_kb = ReplyKeyboardMarkup(
     keyboard=[
-        [
-            KeyboardButton(text=ADD_GOOD),
-            KeyboardButton(text=CHECK_GOODS),
-            KeyboardButton(text=DELETE_GOOD),
-        ],
+        [KeyboardButton(text=ADD_GOOD), KeyboardButton(text=CHECK_GOODS)],
+        [KeyboardButton(text=DELETE_GOOD), KeyboardButton(text=CHECK_ONE)],
     ],
     resize_keyboard=True,
     input_field_placeholder=MAIN_KB_PLACEHOLDER,

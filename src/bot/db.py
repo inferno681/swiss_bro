@@ -33,9 +33,9 @@ class MongoDB:
             [('name', 1), ('telegram_id', 1)], unique=True
         )
 
-    async def get_document(self, url: str) -> dict | None:
+    async def get_document(self, **kwargs) -> dict | None:
         """Get a document by URL."""
-        return await self.collection.find_one({'url': url})
+        return await self.collection.find_one(kwargs)
 
     async def insert_document(self, document: dict) -> bool:
         """Insert a new document."""

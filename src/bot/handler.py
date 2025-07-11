@@ -13,6 +13,8 @@ from bot.constants import (
     ALREADY_EXISTS_MESSAGE,
     CANCEL,
     CHECK_GOODS,
+    CHECK_ONE,
+    CHECK_ONE_CANCELED_MESSAGE,
     DELETE_GOOD,
     DELETION_CANCELED_MESSAGE,
     ERROR_MESSAGE,
@@ -23,10 +25,17 @@ from bot.constants import (
     NO_MESSAGE_ERROR,
     NO_PRICE_MESSAGE,
     NOT_URL_MESSAGE,
+    PRICE_IN_RUBLES,
     PRODUCT_DELETED_MESSAGE,
+    PRODUCT_INFO_LINE,
+    PRODUCT_NOT_FOUND_MESSAGE,
+    RUB_LINE,
+    RUBLE_PRICE_LINE_INFO,
     SEND_LINK_MESSAGE,
+    UPDATE_PRICE_MESSAGE,
     URL_REGEX,
 )
+from bot.currency import get_currency_to_rub_rate
 from bot.db import mongo
 from bot.keyboard import cancel_kb, get_keyboard_with_navigation, main_kb
 from bot.parser import get_price
@@ -43,6 +52,10 @@ class DeleteProduct(StatesGroup):
     waiting_for_name = State()
 
 
+class ProductInfo(StatesGroup):
+    waiting_for_name = State()
+
+
 router = Router()
 
 
@@ -53,6 +66,13 @@ async def command_start_handler(message: Message) -> None:
         message.from_user.full_name if message.from_user else 'Anonymous'
     )
     await message.answer(f'Привет, {hbold(user_name)}!', reply_markup=main_kb)
+
+
+@router.message(F.text == CANCEL)
+async def cancel_handler(message: Message, state: FSMContext):
+    """Cancel handler."""
+    await state.clear()
+    await message.answer('Отмена', reply_markup=main_kb)
 
 
 @router.message(F.text == ADD_GOOD)
@@ -78,7 +98,18 @@ async def process_url(message: Message, state: FSMContext) -> None:
     if not url.startswith(ALLOWED_SITES):
         await message.answer(INCORRECT_URL_MESSAGE)
         return
+    if not message.from_user:
+        await message.answer(
+            ERROR_MESSAGE,
+            reply_markup=main_kb,
+        )
+        await state.clear()
+        return
 
+    if await mongo.get_document(telegram_id=message.from_user.id, url=url):
+        await message.answer(ALREADY_EXISTS_MESSAGE, reply_markup=main_kb)
+        await state.clear()
+        return
     await state.update_data(url=url)
 
     await message.answer(LINK_RECEIVED_MESSAGE, reply_markup=cancel_kb)
@@ -100,7 +131,6 @@ async def process_name(message: Message, state: FSMContext) -> None:
         await state.clear()
         return
 
-    price_info = await get_price(url)
     if not message.from_user:
         await message.answer(
             ERROR_MESSAGE,
@@ -109,6 +139,7 @@ async def process_name(message: Message, state: FSMContext) -> None:
         await state.clear()
         return
 
+    price_info = await get_price(url)
     if price_info:
         price, currency = price_info
         good_info = BaseScheme(
@@ -122,15 +153,24 @@ async def process_name(message: Message, state: FSMContext) -> None:
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
         )
-        if await mongo.insert_document(good_info.model_dump()):
-            await message.answer(
+        await mongo.insert_document(good_info.model_dump())
+        rate = await get_currency_to_rub_rate(currency)
+        if rate:
+            text = (
                 GOOD_ADDED_MESSAGE.format(
                     name=name, price=f'{price} {currency}'
-                ),
-                reply_markup=main_kb,
+                )
+                + ' '
+                + PRICE_IN_RUBLES.format(price=round(rate * float(price)))
             )
         else:
-            await message.answer(ALREADY_EXISTS_MESSAGE, reply_markup=main_kb)
+            text = GOOD_ADDED_MESSAGE.format(
+                name=name, price=f'{price} {currency}'
+            )
+        await message.answer(
+            text,
+            reply_markup=main_kb,
+        )
     else:
         await message.answer(NO_PRICE_MESSAGE, reply_markup=main_kb)
 
@@ -140,13 +180,6 @@ async def process_name(message: Message, state: FSMContext) -> None:
 @router.message(AddProduct.waiting_for_url)
 async def invalid_url(message: Message):
     await message.answer(NOT_URL_MESSAGE)
-
-
-@router.message(F.text == CANCEL)
-async def cancel_handler(message: Message, state: FSMContext):
-    """Cancel handler."""
-    await state.clear()
-    await message.answer('Отмена', reply_markup=main_kb)
 
 
 @router.message(F.text == CHECK_GOODS)
@@ -163,10 +196,31 @@ async def cmd_check_all(message: Message) -> None:
         await message.answer(NO_GOODS_MESSAGE, reply_markup=main_kb)
         return
 
-    lines = [
-        f'{num + 1}. {product['name']} — {product['price']}'
-        for num, product in enumerate(products)
-    ]
+    lines = []
+    for num, product in enumerate(products):
+        rate = await get_currency_to_rub_rate(product['currency'])
+        if rate:
+            lines.append(
+                PRODUCT_INFO_LINE.format(
+                    pos=num + 1,
+                    name=product['name'],
+                    price=product['price'],
+                    currency=product['currency'],
+                )
+                + ' '
+                + RUBLE_PRICE_LINE_INFO.format(
+                    rub_price=round(rate * float(product['price']))
+                )
+            )
+        else:
+            lines.append(
+                PRODUCT_INFO_LINE.format(
+                    pos=num,
+                    name=product['name'],
+                    price=product['price'],
+                    currency=product['currency'],
+                )
+            )
     text = '\n'.join(lines)
     await message.answer(text, reply_markup=main_kb)
 
@@ -199,10 +253,13 @@ async def cmd_delete_good(message: Message, state: FSMContext):
 
     await state.set_state(DeleteProduct.waiting_for_name)
     await state.update_data(pages=pages, current_page=current_page)
-    lines = [f'{product['name']} — {product['price']}' for product in products]
+    lines = [
+        f'{product['name']} — {product['price']} {product['currency']}'
+        for product in products
+    ]
     text = (
         f'Выберите товар для удаления (стр. {current_page + 1} / '
-        f'{len(pages)}):/n/n'
+        f'{len(pages)}):\n\n'
         f'{'\n'.join(lines)}'
     )
 
@@ -264,6 +321,132 @@ async def process_callback(callback: CallbackQuery, state: FSMContext):
         await callback.message.delete()
         await callback.message.answer(
             PRODUCT_DELETED_MESSAGE.format(product_name=product_name)
+        )
+        await state.clear()
+        await callback.answer()
+
+
+@router.message(F.text == CHECK_ONE)
+async def cmd_check_one(message: Message, state: FSMContext):
+    if not message.from_user:
+        await message.answer(
+            ERROR_MESSAGE,
+            reply_markup=main_kb,
+        )
+        await state.clear()
+        return
+    telegram_id = message.from_user.id
+    all_ids = await mongo.get_all_ids(telegram_id)
+
+    if not all_ids:
+        await message.answer(NO_GOODS_MESSAGE, reply_markup=main_kb)
+        return
+
+    page_size = config.service.page_size
+    pages = [
+        all_ids[i : i + page_size] for i in range(0, len(all_ids), page_size)
+    ]
+    current_page = 0
+
+    products = await mongo.get_documents_by_ids(
+        telegram_id, pages[current_page]
+    )
+
+    await state.set_state(ProductInfo.waiting_for_name)
+    await state.update_data(pages=pages, current_page=current_page)
+    lines = [
+        f'{product['name']} — {product['price']} {product['currency']}'
+        for product in products
+    ]
+    text = (
+        f'Выберите товар для просмотра статистики (стр. {current_page + 1} / '
+        f'{len(pages)}):\n\n'
+        f'{'\n'.join(lines)}'
+    )
+
+    await message.answer(
+        text,
+        reply_markup=get_keyboard_with_navigation(
+            products, current_page, len(pages)
+        ),
+    )
+
+
+@router.callback_query(ProductInfo.waiting_for_name)
+async def check_one_callback(callback: CallbackQuery, state: FSMContext):
+    pagination_data = await state.get_data()
+    pages = pagination_data.get('pages', [])
+    current_page = pagination_data.get('current_page', 0)
+    telegram_id = callback.from_user.id
+
+    if not isinstance(callback.message, Message):
+        await callback.answer(NO_MESSAGE_ERROR)
+        await state.clear()
+        return
+
+    if callback.data == 'cancel':
+        await callback.message.delete()
+        await callback.message.answer(
+            CHECK_ONE_CANCELED_MESSAGE, reply_markup=main_kb
+        )
+        await state.clear()
+        await callback.answer()
+        return
+    if not callback.data:
+        await callback.answer(NO_MESSAGE_ERROR)
+        await state.clear()
+        return
+
+    if callback.data.startswith('next'):
+        current_page += 1
+    elif callback.data.startswith('prev'):
+        current_page -= 1
+
+    if callback.data.startswith('next') or callback.data.startswith('prev'):
+        await state.update_data(current_page=current_page)
+        products = await mongo.get_documents_by_ids(
+            telegram_id, pages[current_page]
+        )
+
+        await callback.message.edit_reply_markup(
+            reply_markup=get_keyboard_with_navigation(
+                products, current_page, len(pages)
+            )
+        )
+        await callback.answer()
+        return
+
+    if callback.data.startswith('name:'):
+        product_name = callback.data.split(':', 1)[1]
+        product = await mongo.get_document(
+            telegram_id=telegram_id, name=product_name
+        )
+        if not product:
+            await callback.message.answer(
+                PRODUCT_NOT_FOUND_MESSAGE.format(product_name=product_name),
+                reply_markup=main_kb,
+            )
+            await state.clear()
+            await callback.answer()
+            return
+        rate = await get_currency_to_rub_rate(product['currency'])
+        if rate:
+            rub_line = RUB_LINE.format(
+                rub_price=round(rate * float(product['price']))
+            )
+        else:
+            rub_line = ''
+        await callback.message.edit_text(
+            text=UPDATE_PRICE_MESSAGE.format(
+                product=product['name'],
+                new_price=f'{product['price']} {product['currency']}',
+                min_price=f'{product['min_price']} {product['currency']}',
+                max_price=f'{product['max_price']} {product['currency']}',
+                created_at=product['created_at'].strftime('%d.%m.%Y %H:%M'),
+                updated_at=product['updated_at'].strftime('%d.%m.%Y %H:%M'),
+                rub_line=rub_line,
+            ),
+            parse_mode='HTML',
         )
         await state.clear()
         await callback.answer()

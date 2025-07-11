@@ -8,7 +8,8 @@ from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pymongo import MongoClient
 
-from bot.constants import JOB_ID, UPDATE_PRICE_MESSAGE
+from bot.constants import JOB_ID, RUB_LINE, UPDATE_PRICE_MESSAGE
+from bot.currency import get_currency_to_rub_rate
 from bot.db import mongo
 from bot.log_message import (
     DECIMAL_ERROR_LOG,
@@ -91,17 +92,31 @@ async def update_single_product(product: dict) -> bool:
             document = await mongo.update_document(url, update)
             log.info(PRICE_UPDATED_LOG, url, new_price)
             if bot and document and product.get('telegram_id'):
-                updated_price = (
-                    f'{document['new_price']} {document['currency']}'
-                )
+                rate = await get_currency_to_rub_rate(product['currency'])
+                if rate:
+                    rub_line = RUB_LINE.format(
+                        rub_price=round(rate * float(product['price']))
+                    )
+                else:
+                    rub_line = ''
                 try:
                     await bot.send_message(
                         chat_id=product['telegram_id'],
                         text=UPDATE_PRICE_MESSAGE.format(
                             product=document['name'],
-                            new_price=updated_price,
-                            min_price=document['min_price'],
-                            max_price=document['max_price'],
+                            rub_line=rub_line,
+                            new_price=(
+                                f'{document['new_price']} '
+                                f'{document['currency']}'
+                            ),
+                            min_price=(
+                                f'{document['min_price']} '
+                                f'{document['currency']}'
+                            ),
+                            max_price=(
+                                f'{document['max_price']} '
+                                f'{document['currency']}'
+                            ),
                             created_at=document['created_at'].strftime(
                                 '%d.%m.%Y %H:%M'
                             ),
