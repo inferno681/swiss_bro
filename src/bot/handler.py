@@ -26,13 +26,13 @@ from bot.constants import (
     NO_PRICE_MESSAGE,
     NOT_URL_MESSAGE,
     PRICE_IN_RUBLES,
+    PRICE_INFO_MESSAGE,
     PRODUCT_DELETED_MESSAGE,
     PRODUCT_INFO_LINE,
     PRODUCT_NOT_FOUND_MESSAGE,
     RUB_LINE,
     RUBLE_PRICE_LINE_INFO,
     SEND_LINK_MESSAGE,
-    UPDATE_PRICE_MESSAGE,
     URL_REGEX,
 )
 from bot.currency import get_currency_to_rub_rate
@@ -437,7 +437,7 @@ async def check_one_callback(callback: CallbackQuery, state: FSMContext):
         else:
             rub_line = ''
         await callback.message.edit_text(
-            text=UPDATE_PRICE_MESSAGE.format(
+            text=PRICE_INFO_MESSAGE.format(
                 product=product['name'],
                 new_price=f'{product['price']} {product['currency']}',
                 min_price=f'{product['min_price']} {product['currency']}',
@@ -445,8 +445,10 @@ async def check_one_callback(callback: CallbackQuery, state: FSMContext):
                 created_at=product['created_at'].strftime('%d.%m.%Y %H:%M'),
                 updated_at=product['updated_at'].strftime('%d.%m.%Y %H:%M'),
                 rub_line=rub_line,
+                url=product['url'],
             ),
             parse_mode='HTML',
+            disable_web_page_preview=True,
         )
         await state.clear()
         await callback.answer()

@@ -106,7 +106,7 @@ async def update_single_product(product: dict) -> bool:
                             product=document['name'],
                             rub_line=rub_line,
                             new_price=(
-                                f'{document['new_price']} '
+                                f'{document['price']} '
                                 f'{document['currency']}'
                             ),
                             min_price=(
@@ -125,6 +125,7 @@ async def update_single_product(product: dict) -> bool:
                             ),
                         ),
                         parse_mode='HTML',
+                        disable_web_page_preview=True,
                     )
                 except Exception as exc:
                     log.error(MESSAGE_SEND_ERROR_LOG, exc)
