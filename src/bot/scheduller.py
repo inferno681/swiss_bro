@@ -123,6 +123,7 @@ async def update_single_product(product: dict) -> bool:
                             updated_at=document['updated_at'].strftime(
                                 '%d.%m.%Y %H:%M'
                             ),
+                            url=document['url'],
                         ),
                         parse_mode='HTML',
                         disable_web_page_preview=True,
