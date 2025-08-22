@@ -59,7 +59,7 @@ async def cmd_check_one(message: Message, state: FSMContext):
     await state.set_state(ProductInfo.waiting_for_name)
     await state.update_data(pages=pages, current_page=current_page)
     lines = [
-        f'{product['name']} — {product['price']} {product['currency']}'
+        f'{product.name} — {product.price} {product.currency}'
         for product in products
     ]
     text = (

@@ -10,7 +10,6 @@ from pymongo import MongoClient
 
 from bot.constants import JOB_ID, RUB_LINE, UPDATE_PRICE_MESSAGE
 from bot.currency import get_currency_to_rub_rate
-from bot.db import mongo
 from bot.log_message import (
     DECIMAL_ERROR_LOG,
     DOCUMENT_UPDATE_ERROR_LOG,
@@ -27,6 +26,7 @@ from bot.log_message import (
     SCHEDULER_START_LOG,
     START_PRICE_UPDATE_LOG,
 )
+from bot.model import Product
 from bot.parser import get_price
 from config import config
 
@@ -52,9 +52,9 @@ jobstores = {
 scheduler = AsyncIOScheduler(jobstores=jobstores)
 
 
-async def update_single_product(product: dict) -> bool:
+async def update_single_product(product: Product) -> bool:
     """Update single product method."""
-    url = product['url']
+    url = product.url
     try:
         price_info = await asyncio.wait_for(get_price(url), timeout=10)
         if price_info is None:
@@ -71,9 +71,9 @@ async def update_single_product(product: dict) -> bool:
 
     try:
         new_price = Decimal(new_price_row)
-        old_price = Decimal(product.get('price', new_price))
-        min_price = Decimal(product.get('min_price', new_price))
-        max_price = Decimal(product.get('max_price', new_price))
+        old_price = Decimal(product.price or new_price)
+        min_price = Decimal(product.min_price or new_price)
+        max_price = Decimal(product.max_price or new_price)
     except (InvalidOperation, TypeError, ValueError) as exc:
         log.error(DECIMAL_ERROR_LOG, url, exc)
         return False
@@ -88,42 +88,40 @@ async def update_single_product(product: dict) -> bool:
 
     if update:
         update['updated_at'] = datetime.now(timezone.utc)
+        update['checked_at'] = datetime.now(timezone.utc)
         try:
-            document = await mongo.update_document(url, update)
+            document = await product.set(update)
             log.info(PRICE_UPDATED_LOG, url, new_price)
-            if bot and document and product.get('telegram_id'):
-                rate = await get_currency_to_rub_rate(product['currency'])
+            if bot and document and product.telegram_id:
+                rate = await get_currency_to_rub_rate(product.currency)
                 if rate:
                     rub_line = RUB_LINE.format(
-                        rub_price=round(rate * float(product['price']))
+                        rub_price=round(rate * float(product.price))
                     )
                 else:
                     rub_line = ''
                 try:
                     await bot.send_message(
-                        chat_id=product['telegram_id'],
+                        chat_id=product.telegram_id,
                         text=UPDATE_PRICE_MESSAGE.format(
-                            product=document['name'],
+                            product=document.name,
                             rub_line=rub_line,
                             new_price=(
-                                f'{document['price']} '
-                                f'{document['currency']}'
+                                f'{document.price} ' f'{document.currency}'
                             ),
                             min_price=(
-                                f'{document['min_price']} '
-                                f'{document['currency']}'
+                                f'{document.min_price} ' f'{document.currency}'
                             ),
                             max_price=(
-                                f'{document['max_price']} '
-                                f'{document['currency']}'
+                                f'{document.max_price} ' f'{document.currency}'
                             ),
-                            created_at=document['created_at'].strftime(
+                            created_at=document.created_at.strftime(
                                 '%d.%m.%Y %H:%M'
                             ),
-                            updated_at=document['updated_at'].strftime(
+                            updated_at=document.updated_at.strftime(
                                 '%d.%m.%Y %H:%M'
                             ),
-                            url=document['url'],
+                            url=document.url,
                         ),
                         parse_mode='HTML',
                         disable_web_page_preview=True,
@@ -135,6 +133,8 @@ async def update_single_product(product: dict) -> bool:
             log.error(DOCUMENT_UPDATE_ERROR_LOG, url, exc)
             return False
     else:
+        update['checked_at'] = datetime.now(timezone.utc)
+        await product.set(update)
         log.info(PRICE_NOT_CHANGED_LOG, url)
         return False
 
@@ -143,7 +143,7 @@ async def update_prices_job():
     """Price update job."""
     log.info(START_PRICE_UPDATE_LOG)
 
-    products = await mongo.get_all_documents()
+    products = await Product.find_all().to_list()
     if not products:
         log.error(PRODUCT_LIST_NOT_RECEIVED_LOG)
         return

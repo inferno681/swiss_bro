@@ -15,6 +15,7 @@ from bot.constants import (
     NEXT_PAGE_BUTTON,
     PREV_PAGE_BUTTON,
 )
+from bot.model import Product
 
 main_kb = ReplyKeyboardMarkup(
     keyboard=[
@@ -34,7 +35,7 @@ cancel_kb = ReplyKeyboardMarkup(
 
 
 def get_keyboard_with_navigation(
-    products: list[dict], page: int, total_pages: int
+    products: list[Product], page: int, total_pages: int
 ) -> InlineKeyboardMarkup:
     keyboard = []
 
@@ -42,8 +43,8 @@ def get_keyboard_with_navigation(
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    text=product['name'],
-                    callback_data=f'name:{product['name']}',
+                    text=product.name,
+                    callback_data=f'name:{product.name}',
                 )
             ]
         )

@@ -11,6 +11,7 @@ from aiogram.webhook.aiohttp_server import (
 )
 from aiohttp import web
 
+from bot.db import init_db
 from bot.handler import main_router
 from bot.log_message import BOT_STOPPED_LOG
 from bot.middleware import AdminOnlyMiddleware
@@ -71,6 +72,7 @@ async def start_polling():
 async def main():
     """Main function to start the bot."""
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    await init_db()
     await start_scheduler()
     if config.service.webhook:
         app = await create_app()

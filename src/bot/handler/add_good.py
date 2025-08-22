@@ -115,6 +115,7 @@ async def process_name(message: Message, state: FSMContext) -> None:
             max_price=price,
             currency=currency,
             created_at=datetime.now(timezone.utc),
+            checked_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc),
         ).insert()
         rate = await get_currency_to_rub_rate(currency)

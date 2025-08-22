@@ -35,10 +35,7 @@ class Product(Document):
     async def get_all_ids(cls, user_id: int) -> list[str]:
         """Получить все ObjectId пользователя в порядке добавления."""
         products = (
-            await cls.find(cls.user_id == user_id)
-            .sort('+_id')
-            .project(IdProjection)
-            .to_list()
+            await cls.find(cls.user_id == user_id).sort('+_id').to_list()
         )
         return [str(product.id) for product in products]
 

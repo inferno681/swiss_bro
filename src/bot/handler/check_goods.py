@@ -33,18 +33,18 @@ async def cmd_check_all(message: Message) -> None:
 
     lines = []
     for num, product in enumerate(products):
-        rate = await get_currency_to_rub_rate(product['currency'])
+        rate = await get_currency_to_rub_rate(product.currency)
         if rate:
             lines.append(
                 PRODUCT_INFO_LINE.format(
                     pos=num + 1,
-                    name=product['name'],
-                    price=product['price'],
-                    currency=product['currency'],
+                    name=product.name,
+                    price=product.price,
+                    currency=product.currency,
                 )
                 + ' '
                 + RUBLE_PRICE_LINE_INFO.format(
-                    rub_price=round(rate * float(product['price']))
+                    rub_price=round(rate * float(product.price))
                 )
             )
         else:
