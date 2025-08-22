@@ -11,7 +11,7 @@ from aiogram.webhook.aiohttp_server import (
 )
 from aiohttp import web
 
-from bot.handler import router
+from bot.handler import main_router
 from bot.log_message import BOT_STOPPED_LOG
 from bot.middleware import AdminOnlyMiddleware
 from bot.scheduller import set_bot, start_scheduler
@@ -21,7 +21,7 @@ from config import config
 def setup_bot_and_dispatcher() -> tuple[Bot, Dispatcher]:
     """Bot and Dispatcher setup."""
     dp = Dispatcher()
-    dp.include_router(router)
+    dp.include_router(main_router)
     dp.message.middleware(AdminOnlyMiddleware(set(config.service.admins)))
 
     bot = Bot(
