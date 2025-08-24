@@ -39,7 +39,11 @@ START_MESSAGE = (
 ITEMS_PER_PAGE = 10
 PREV_PAGE_BUTTON = '⬅️ Назад'
 NEXT_PAGE_BUTTON = '➡️ Вперёд'
-
+PAGINATION_MESSAGE = (
+    'Выберите товар для просмотра статистики (стр. {current_page} / '
+    '{pages}):\n\n'
+    '{lines}'
+)
 JOB_ID = 'update_prices_job'
 RUB_LINE = '💵 Примерно <b>{rub_price} ₽</b>\n'
 UPDATE_PRICE_MESSAGE = (

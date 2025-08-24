@@ -2,19 +2,11 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, Message
+from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import lazy_gettext as __
 
-from bot.constants import (
-    CHECK_ONE,
-    CHECK_ONE_CANCELED_MESSAGE,
-    ERROR_MESSAGE,
-    NO_GOODS_MESSAGE,
-    NO_MESSAGE_ERROR,
-    PRICE_INFO_MESSAGE,
-    PRODUCT_NOT_FOUND_MESSAGE,
-    RUB_LINE,
-)
 from bot.currency import get_currency_to_rub_rate
-from bot.keyboard import get_keyboard_with_navigation, main_kb
+from bot.keyboard import get_keyboard_with_navigation, get_main_kb
 from bot.model import Product
 from config import config
 
@@ -30,12 +22,12 @@ class ProductInfo(StatesGroup):
 router = Router(name='check_one_router')
 
 
-@router.message(F.text == CHECK_ONE)
+@router.message(F.text == __('check_one'))
 async def cmd_check_one(message: Message, state: FSMContext):
     if not message.from_user:
         await message.answer(
-            ERROR_MESSAGE,
-            reply_markup=main_kb,
+            _('error_message'),
+            reply_markup=get_main_kb(),
         )
         await state.clear()
         return
@@ -43,7 +35,7 @@ async def cmd_check_one(message: Message, state: FSMContext):
     all_ids = await Product.get_all_ids(telegram_id)
 
     if not all_ids:
-        await message.answer(NO_GOODS_MESSAGE, reply_markup=main_kb)
+        await message.answer(_('no_goods_message'), reply_markup=get_main_kb())
         return
 
     page_size = config.service.page_size
@@ -62,14 +54,13 @@ async def cmd_check_one(message: Message, state: FSMContext):
         f'{product.name} — {product.price} {product.currency}'
         for product in products
     ]
-    text = (
-        f'Выберите товар для просмотра статистики (стр. {current_page + 1} / '
-        f'{len(pages)}):\n\n'
-        f'{'\n'.join(lines)}'
-    )
 
     await message.answer(
-        text,
+        _('pagination_message').format(
+            current_page=current_page + 1,
+            pages=len(pages),
+            lines='\n'.join(lines),
+        ),
         reply_markup=get_keyboard_with_navigation(
             products, current_page, len(pages)
         ),
@@ -84,20 +75,20 @@ async def check_one_callback(callback: CallbackQuery, state: FSMContext):
     telegram_id = callback.from_user.id
 
     if not isinstance(callback.message, Message):
-        await callback.answer(NO_MESSAGE_ERROR)
+        await callback.answer(_('no_message_error'))
         await state.clear()
         return
 
     if callback.data == 'cancel':
         await callback.message.delete()
         await callback.message.answer(
-            CHECK_ONE_CANCELED_MESSAGE, reply_markup=main_kb
+            _('check_one_cancel_message'), reply_markup=get_main_kb()
         )
         await state.clear()
         await callback.answer()
         return
     if not callback.data:
-        await callback.answer(NO_MESSAGE_ERROR)
+        await callback.answer(_('no_message_error'))
         await state.clear()
         return
 
@@ -127,21 +118,23 @@ async def check_one_callback(callback: CallbackQuery, state: FSMContext):
         )
         if not product:
             await callback.message.answer(
-                PRODUCT_NOT_FOUND_MESSAGE.format(product_name=product_name),
-                reply_markup=main_kb,
+                _('product_not_found_message').format(
+                    product_name=product_name
+                ),
+                reply_markup=get_main_kb(),
             )
             await state.clear()
             await callback.answer()
             return
         rate = await get_currency_to_rub_rate(product.currency)
         if rate:
-            rub_line = RUB_LINE.format(
+            rub_line = _('rub_line').format(
                 rub_price=round(rate * float(product.price))
             )
         else:
             rub_line = ''
         await callback.message.edit_text(
-            text=PRICE_INFO_MESSAGE.format(
+            text=_('price_info_message').format(
                 product=product.name,
                 new_price=f'{product.price} {product.currency}',
                 min_price=f'{product.min_price} {product.currency}',

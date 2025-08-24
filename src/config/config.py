@@ -19,6 +19,7 @@ class ServiceSettings(BaseModel):
     currency_rate_source: str
     rate_data_ttl: int
     admins: list[int]
+    locales: list[str]
 
 
 class MongoSettings(BaseModel):

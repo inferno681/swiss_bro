@@ -1,0 +1,152 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-08-24 21:18+0200\n"
+"PO-Revision-Date: 2025-08-24 17:33+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.13.1\n"
+
+#: src/bot/handler/add_good.py:24 src/bot/keyboard.py:16
+msgid "add_good"
+msgstr "Add good"
+
+#: src/bot/handler/check_goods.py:14 src/bot/keyboard.py:17
+msgid "check_goods"
+msgstr "Check goods"
+
+#: src/bot/handler/delete_good.py:20 src/bot/keyboard.py:20
+msgid "delete_good"
+msgstr "Delete good"
+
+#: src/bot/handler/check_one.py:25 src/bot/keyboard.py:21
+msgid "check_one"
+msgstr "Check one"
+
+#: src/bot/keyboard.py:25
+msgid "main_kb_place_holder"
+msgstr "Choose a menu item..."
+
+#: src/bot/handler/cmd.py:50 src/bot/handler/cmd.py:54 src/bot/keyboard.py:31
+#: src/bot/keyboard.py:66
+msgid "cancel"
+msgstr "❌ Отмена"
+
+#: src/bot/keyboard.py:55
+msgid "prev_button"
+msgstr "⬅️ prev"
+
+#: src/bot/keyboard.py:59
+msgid "next_button"
+msgstr "➡️ next"
+
+#: src/bot/handler/add_good.py:27
+msgid "send_link_message"
+msgstr "Please send the product link."
+
+#: src/bot/handler/add_good.py:36 src/bot/handler/add_good.py:43
+#: src/bot/handler/add_good.py:50
+msgid "incorrect_url_message"
+msgstr "The link must start with one of the following sites: {sites}"
+
+#: src/bot/handler/add_good.py:55 src/bot/handler/add_good.py:84
+#: src/bot/handler/add_good.py:89 src/bot/handler/check_goods.py:19
+#: src/bot/handler/check_one.py:29 src/bot/handler/delete_good.py:24
+msgid "error_message"
+msgstr "An error occurred. Please try again from the beginning."
+
+#: src/bot/handler/add_good.py:64
+msgid "already_exist_message"
+msgstr "This product is already being tracked."
+
+#: src/bot/handler/add_good.py:71
+msgid "link_received_message"
+msgstr "Got it! What will you name the product?"
+
+#: src/bot/handler/add_good.py:111 src/bot/handler/add_good.py:118
+msgid "good_added_message"
+msgstr "Product \"{name}\" with price {price} has been added."
+
+#: src/bot/handler/add_good.py:115
+msgid "price_in_rubles"
+msgstr "Approximate price in rubles: {price} ₽"
+
+#: src/bot/handler/add_good.py:126
+msgid "no_price_message"
+msgstr "Failed to get the price from the link."
+
+#: src/bot/handler/add_good.py:133
+msgid "not_url_message"
+msgstr "This doesn’t look like a link. Please send a valid link."
+
+#: src/bot/handler/check_goods.py:27 src/bot/handler/check_one.py:38
+#: src/bot/handler/delete_good.py:33
+#, fuzzy
+msgid "no_goods_message"
+msgstr "Пока ничего не отслеживается."
+
+#: src/bot/handler/check_goods.py:42
+msgid "ruble_price_info"
+msgstr "Approximately {rub_price} rubles"
+
+#: src/bot/handler/check_one.py:59 src/bot/handler/delete_good.py:54
+#, fuzzy
+msgid "pagination_message"
+msgstr "Select a product to view statistics (page {current_page} / {pages}):\n\n{lines}'"
+
+#: src/bot/handler/check_one.py:78 src/bot/handler/check_one.py:91
+#: src/bot/handler/delete_good.py:73 src/bot/handler/delete_good.py:86
+#, fuzzy
+msgid "no_message_error"
+msgstr "Error: message is unavailable."
+
+#: src/bot/handler/check_one.py:85
+#, fuzzy
+msgid "check_one_cancel_message"
+msgstr "Statistics view canceled."
+
+#: src/bot/handler/check_one.py:121
+#, fuzzy
+msgid "product_not_found_message"
+msgstr "⚠️ Product with name "{product_name}" not found."
+
+#: src/bot/handler/check_one.py:131
+msgid "rub_line"
+msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
+
+#: src/bot/handler/check_one.py:137
+#, fuzzy
+msgid "price_info_message"
+msgstr "Failed to get the price from the link."
+
+#: src/bot/handler/cmd.py:21
+msgid "user_not_recognized"
+msgstr "Failed to identify the user 🚫"
+
+#: src/bot/handler/cmd.py:43
+msgid "start_message"
+msgstr ""
+"Hello, {name}!\n"
+" This bot monitors product prices on the following sites:\n"
+" {sites}"
+
+#: src/bot/handler/delete_good.py:80
+#, fuzzy
+msgid "deletion_canceled_message"
+msgstr "Deletion canceled."
+
+#: src/bot/handler/delete_good.py:116
+#, fuzzy
+msgid "product_deleted_message"
+msgstr "Product \"{product_name}\" has been deleted."

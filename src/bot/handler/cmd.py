@@ -2,15 +2,12 @@ from aiogram import F, Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import lazy_gettext as __
 from aiogram.utils.markdown import hbold
 
-from bot.constants import (
-    ALLOWED_SITES,
-    CANCEL,
-    START_MESSAGE,
-    USER_NOT_RECOGNIZED,
-)
-from bot.keyboard import main_kb
+from bot.constants import ALLOWED_SITES
+from bot.keyboard import get_main_kb
 from bot.model import User
 
 router = Router(name='cmd_router')
@@ -21,7 +18,7 @@ async def command_start_handler(message: Message) -> None:
     """Start command handler."""
     tg_user = message.from_user
     if not tg_user:
-        await message.answer(USER_NOT_RECOGNIZED)
+        await message.answer(_('user_not_recognized'))
         return
     user = await User.find_one(User.user_id == tg_user.id)
     if user is None:
@@ -43,15 +40,15 @@ async def command_start_handler(message: Message) -> None:
         user.is_premium = getattr(tg_user, 'is_premium', None)
         await user.save()
     await message.answer(
-        START_MESSAGE.format(
+        _('start_message').format(
             name=hbold(tg_user.full_name), sites=', \n'.join(ALLOWED_SITES)
         ),
-        reply_markup=main_kb,
+        reply_markup=get_main_kb(),
     )
 
 
-@router.message(F.text == CANCEL)
+@router.message(F.text == __('cancel'))
 async def cancel_handler(message: Message, state: FSMContext):
     """Cancel handler."""
     await state.clear()
-    await message.answer('cancel', reply_markup=main_kb)
+    await message.answer(_('cancel'), reply_markup=get_main_kb())

@@ -9,6 +9,10 @@ class IdProjection(BaseModel):
     id: PydanticObjectId
 
 
+class UserLocaleProjection(BaseModel):
+    language_code: str
+
+
 class User(Document):
     user_id: int
     first_name: str

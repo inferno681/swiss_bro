@@ -14,6 +14,10 @@ service:
     - 459335857
     - 5285825703
 
+  locales:
+    - "en"
+    - "ru"
+
 mongodb:
   host: "swissbro.y9tkger.mongodb.net"
   port: 27017

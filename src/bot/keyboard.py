@@ -4,34 +4,34 @@ from aiogram.types import (
     KeyboardButton,
     ReplyKeyboardMarkup,
 )
+from aiogram.utils.i18n import gettext as _
 
-from bot.constants import (
-    ADD_GOOD,
-    CANCEL,
-    CHECK_GOODS,
-    CHECK_ONE,
-    DELETE_GOOD,
-    MAIN_KB_PLACEHOLDER,
-    NEXT_PAGE_BUTTON,
-    PREV_PAGE_BUTTON,
-)
 from bot.model import Product
 
-main_kb = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text=ADD_GOOD), KeyboardButton(text=CHECK_GOODS)],
-        [KeyboardButton(text=DELETE_GOOD), KeyboardButton(text=CHECK_ONE)],
-    ],
-    resize_keyboard=True,
-    input_field_placeholder=MAIN_KB_PLACEHOLDER,
-)
+
+def get_main_kb():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text=_('add_good')),
+                KeyboardButton(text=_('check_goods')),
+            ],
+            [
+                KeyboardButton(text=_('delete_good')),
+                KeyboardButton(text=_('check_one')),
+            ],
+        ],
+        resize_keyboard=True,
+        input_field_placeholder=_('main_kb_place_holder'),
+    )
 
 
-cancel_kb = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text=CANCEL)]],
-    resize_keyboard=True,
-    one_time_keyboard=True,
-)
+def get_cancel_kb():
+    return ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text=_('cancel'))]],
+        resize_keyboard=True,
+        one_time_keyboard=True,
+    )
 
 
 def get_keyboard_with_navigation(
@@ -52,17 +52,17 @@ def get_keyboard_with_navigation(
     nav_buttons = []
     if page > 0:
         nav_buttons.append(
-            InlineKeyboardButton(text=PREV_PAGE_BUTTON, callback_data='prev')
+            InlineKeyboardButton(text=_('prev_button'), callback_data='prev')
         )
     if page < total_pages - 1:
         nav_buttons.append(
-            InlineKeyboardButton(text=NEXT_PAGE_BUTTON, callback_data='next')
+            InlineKeyboardButton(text=_('next_button'), callback_data='next')
         )
 
     if nav_buttons:
         keyboard.append(nav_buttons)
 
     keyboard.append(
-        [InlineKeyboardButton(text=CANCEL, callback_data='cancel')]
+        [InlineKeyboardButton(text=_('cancel'), callback_data='cancel')]
     )
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
