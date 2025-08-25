@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-08-25 14:00+0200\n"
+"POT-Creation-Date: 2025-08-25 14:47+0200\n"
 "PO-Revision-Date: 2025-08-24 17:33+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -39,7 +39,7 @@ msgid "main_kb_place_holder"
 msgstr "Choose a menu item..."
 
 #: src/bot/handler/cmd.py:50 src/bot/handler/cmd.py:54 src/bot/keyboard.py:31
-#: src/bot/keyboard.py:66
+#: src/bot/keyboard.py:66 src/bot/keyboard.py:81
 msgid "cancel"
 msgstr "❌ Отмена"
 
@@ -51,15 +51,24 @@ msgstr "⬅️ prev"
 msgid "next_button"
 msgstr "➡️ next"
 
-#: src/bot/scheduller.py:118
+#: src/bot/scheduller.py:119
 #, fuzzy
 msgid "ruble_line"
 msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
 
-#: src/bot/scheduller.py:126
+#: src/bot/scheduller.py:127
 #, fuzzy
 msgid "update_price_message"
-msgstr "💰 The price of <b>{product}</b> has been updated: <b>{new_price}</b>\n{rub_line}\n📉 Minimum price during the period: <b>{min_price}</b>\n📈 Maximum price during the period: <b>{max_price}</b>\n\n🕒 Monitoring started: <b>{created_at}</b>\n📅 Last update: <b>{updated_at}</b>\n\n🔗 <a href="{url}">Go to the website</a>"
+msgstr ""
+"💰 The price of <b>{product}</b> has been updated: <b>{new_price}</b>\n"
+"{rub_line}\n"
+"📉 Minimum price during the period: <b>{min_price}</b>\n"
+"📈 Maximum price during the period: <b>{max_price}</b>\n"
+"\n"
+"🕒 Monitoring started: <b>{created_at}</b>\n"
+"📅 Last update: <b>{updated_at}</b>\n"
+"\n"
+"🔗 <a href=\"{url}\">Go to the website</a>"
 
 #: src/bot/handler/add_good.py:27
 msgid "send_link_message"
@@ -120,6 +129,7 @@ msgstr ""
 
 #: src/bot/handler/check_one.py:78 src/bot/handler/check_one.py:91
 #: src/bot/handler/delete_good.py:73 src/bot/handler/delete_good.py:86
+#: src/bot/handler/lang.py:30 src/bot/handler/lang.py:34
 #, fuzzy
 msgid "no_message_error"
 msgstr "Error: message is unavailable."
@@ -163,3 +173,18 @@ msgstr "Deletion canceled."
 #, fuzzy
 msgid "product_deleted_message"
 msgstr "Product \"{product_name}\" has been deleted."
+
+#: src/bot/handler/lang.py:23
+#, fuzzy
+msgid "choose_lang_message"
+msgstr "Choose your language:"
+
+#: src/bot/handler/lang.py:40
+#, fuzzy
+msgid "lang_change_cancel_message"
+msgstr "Language change canceled."
+
+#: src/bot/handler/lang.py:48
+#, fuzzy
+msgid "incorrect_lang_code"
+msgstr "Invalid language code."

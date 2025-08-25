@@ -66,3 +66,18 @@ def get_keyboard_with_navigation(
         [InlineKeyboardButton(text=_('cancel'), callback_data='cancel')]
     )
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
+
+
+lang_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text='🇷🇺 Русский', callback_data='set_lang_ru'
+            ),
+            InlineKeyboardButton(
+                text='🇬🇧 English', callback_data='set_lang_en'
+            ),
+        ],
+        [InlineKeyboardButton(text=_('cancel'), callback_data='cancel')],
+    ]
+)
