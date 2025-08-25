@@ -1,14 +1,16 @@
 import asyncio
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
+from gettext import translation
 from logging import getLogger
+from pathlib import Path
 
 from aiogram import Bot
 from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pymongo import MongoClient
 
-from bot.constants import JOB_ID, RUB_LINE, UPDATE_PRICE_MESSAGE
+from bot.constants import JOB_ID
 from bot.currency import get_currency_to_rub_rate
 from bot.log_message import (
     DECIMAL_ERROR_LOG,
@@ -26,14 +28,25 @@ from bot.log_message import (
     SCHEDULER_START_LOG,
     START_PRICE_UPDATE_LOG,
 )
-from bot.model import Product
+from bot.model import Product, User, UserLocaleProjection
 from bot.parser import get_price
 from config import config
 
+LOCALE_DIR = Path(__file__).parent.parent / 'locales'
 log = getLogger(__name__)
 
 
 bot: Bot | None = None
+
+
+def get_translator(lang: str):
+    """Return gettext function for given language."""
+    return translation(
+        domain='messages',
+        localedir=LOCALE_DIR,
+        languages=[lang],
+        fallback=True,
+    ).gettext
 
 
 def set_bot(bot_instance: Bot):
@@ -55,6 +68,14 @@ scheduler = AsyncIOScheduler(jobstores=jobstores)
 async def update_single_product(product: Product) -> bool:
     """Update single product method."""
     url = product.url
+    locale = await User.find_one(User.user_id == product.user_id).project(
+        UserLocaleProjection
+    )
+    if locale and locale.language_code in config.service.locales:
+        language = locale.language_code
+    else:
+        language = 'en'
+    _ = get_translator(language)
     try:
         price_info = await asyncio.wait_for(get_price(url), timeout=10)
         if price_info is None:
@@ -92,18 +113,18 @@ async def update_single_product(product: Product) -> bool:
         try:
             document = await product.set(update)
             log.info(PRICE_UPDATED_LOG, url, new_price)
-            if bot and document and product.telegram_id:
+            if bot and document and product.user_id:
                 rate = await get_currency_to_rub_rate(product.currency)
                 if rate:
-                    rub_line = RUB_LINE.format(
+                    rub_line = _('ruble_line').format(
                         rub_price=round(rate * float(product.price))
                     )
                 else:
                     rub_line = ''
                 try:
                     await bot.send_message(
-                        chat_id=product.telegram_id,
-                        text=UPDATE_PRICE_MESSAGE.format(
+                        chat_id=product.user_id,
+                        text=_('update_price_message').format(
                             product=document.name,
                             rub_line=rub_line,
                             new_price=(

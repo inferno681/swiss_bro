@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-08-24 21:18+0200\n"
+"POT-Creation-Date: 2025-08-25 14:00+0200\n"
 "PO-Revision-Date: 2025-08-24 17:33+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -50,6 +50,16 @@ msgstr "⬅️ prev"
 #: src/bot/keyboard.py:59
 msgid "next_button"
 msgstr "➡️ next"
+
+#: src/bot/scheduller.py:118
+#, fuzzy
+msgid "ruble_line"
+msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
+
+#: src/bot/scheduller.py:126
+#, fuzzy
+msgid "update_price_message"
+msgstr "💰 The price of <b>{product}</b> has been updated: <b>{new_price}</b>\n{rub_line}\n📉 Minimum price during the period: <b>{min_price}</b>\n📈 Maximum price during the period: <b>{max_price}</b>\n\n🕒 Monitoring started: <b>{created_at}</b>\n📅 Last update: <b>{updated_at}</b>\n\n🔗 <a href="{url}">Go to the website</a>"
 
 #: src/bot/handler/add_good.py:27
 msgid "send_link_message"
@@ -103,7 +113,10 @@ msgstr "Approximately {rub_price} rubles"
 #: src/bot/handler/check_one.py:59 src/bot/handler/delete_good.py:54
 #, fuzzy
 msgid "pagination_message"
-msgstr "Select a product to view statistics (page {current_page} / {pages}):\n\n{lines}'"
+msgstr ""
+"Select a product to view statistics (page {current_page} / {pages}):\n"
+"\n"
+"{lines}'"
 
 #: src/bot/handler/check_one.py:78 src/bot/handler/check_one.py:91
 #: src/bot/handler/delete_good.py:73 src/bot/handler/delete_good.py:86
@@ -119,7 +132,7 @@ msgstr "Statistics view canceled."
 #: src/bot/handler/check_one.py:121
 #, fuzzy
 msgid "product_not_found_message"
-msgstr "⚠️ Product with name "{product_name}" not found."
+msgstr "⚠️ Product with name \"{product_name}\" not found."
 
 #: src/bot/handler/check_one.py:131
 msgid "rub_line"

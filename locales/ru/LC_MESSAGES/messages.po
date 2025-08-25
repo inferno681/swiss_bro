@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-08-24 21:18+0200\n"
+"POT-Creation-Date: 2025-08-25 14:00+0200\n"
 "PO-Revision-Date: 2025-08-24 17:33+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -51,6 +51,16 @@ msgstr "⬅️ Назад"
 #: src/bot/keyboard.py:59
 msgid "next_button"
 msgstr "➡️ Вперёд"
+
+#: src/bot/scheduller.py:118
+#, fuzzy
+msgid "ruble_line"
+msgstr "💵 Примерно <b>{rub_price} ₽</b>\n"
+
+#: src/bot/scheduller.py:126
+#, fuzzy
+msgid "update_price_message"
+msgstr "'💰 Цена на <b>{product}</b> обновилась: <b>{new_price}</b>\n{rub_line}\n📉 Минимальная цена за период: <b>{min_price}</b>\n📈 Максимальная цена за период: <b>{max_price}</b>\n\n🕒 Наблюдение начато: <b>{created_at}</b>\n📅 Последнее обновление: <b>{updated_at}</b>\n\n🔗 <a href="{url}">Перейти на сайт</a>"
 
 #: src/bot/handler/add_good.py:27
 msgid "send_link_message"
@@ -104,7 +114,10 @@ msgstr "Примерно {rub_price} рублей"
 #: src/bot/handler/check_one.py:59 src/bot/handler/delete_good.py:54
 #, fuzzy
 msgid "pagination_message"
-msgstr "Выберите товар для просмотра статистики (стр. {current_page} / {pages}):\n\n {lines}"
+msgstr ""
+"Выберите товар для просмотра статистики (стр. {current_page} / {pages}):\n"
+"\n"
+" {lines}"
 
 #: src/bot/handler/check_one.py:78 src/bot/handler/check_one.py:91
 #: src/bot/handler/delete_good.py:73 src/bot/handler/delete_good.py:86
@@ -129,7 +142,16 @@ msgstr "💵 Примерно <b>{rub_price} ₽</b>\n"
 #: src/bot/handler/check_one.py:137
 #, fuzzy
 msgid "price_info_message"
-msgstr "💰 Цена на <b>{product}</b>: <b>{new_price}</b>\n{rub_line}\n📉 Минимальная цена за период: <b>{min_price}</b>\n📈 Максимальная цена за период: <b>{max_price}</b>\n\n🕒 Наблюдение начато: <b>{created_at}</b>\n📅 Последнее обновление: <b>{updated_at}</b>\n\n🔗 <a href="{url}">Перейти на сайт</a>"
+msgstr ""
+"💰 Цена на <b>{product}</b>: <b>{new_price}</b>\n"
+"{rub_line}\n"
+"📉 Минимальная цена за период: <b>{min_price}</b>\n"
+"📈 Максимальная цена за период: <b>{max_price}</b>\n"
+"\n"
+"🕒 Наблюдение начато: <b>{created_at}</b>\n"
+"📅 Последнее обновление: <b>{updated_at}</b>\n"
+"\n"
+"🔗 <a href=\"{url}\">Перейти на сайт</a>"
 
 #: src/bot/handler/cmd.py:21
 msgid "user_not_recognized"
@@ -137,7 +159,10 @@ msgstr "Не удалось определить пользователя 🚫"
 
 #: src/bot/handler/cmd.py:43
 msgid "start_message"
-msgstr "Привет, {name}!\n Этот бот мониторит цены на товары на следующих сайтах: \n {sites}"
+msgstr ""
+"Привет, {name}!\n"
+" Этот бот мониторит цены на товары на следующих сайтах: \n"
+" {sites}"
 
 #: src/bot/handler/delete_good.py:80
 #, fuzzy
@@ -147,4 +172,4 @@ msgstr "Удаление отменено."
 #: src/bot/handler/delete_good.py:116
 #, fuzzy
 msgid "product_deleted_message"
-msgstr "Товар "{product_name}" удалён."
+msgstr "Товар \"{product_name}\" удалён."
