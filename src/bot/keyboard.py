@@ -9,20 +9,21 @@ from aiogram.utils.i18n import gettext as _
 from bot.model import Product
 
 
-def get_main_kb():
+def get_main_kb(locale: str | None = None):
     return ReplyKeyboardMarkup(
         keyboard=[
             [
-                KeyboardButton(text=_('add_good')),
-                KeyboardButton(text=_('check_goods')),
+                KeyboardButton(text=_('add_good', locale=locale)),
+                KeyboardButton(text=_('check_goods', locale=locale)),
             ],
             [
-                KeyboardButton(text=_('delete_good')),
-                KeyboardButton(text=_('check_one')),
+                KeyboardButton(text=_('delete_good', locale=locale)),
+                KeyboardButton(text=_('check_one', locale=locale)),
             ],
+            [KeyboardButton(text=_('language_change', locale=locale))],
         ],
         resize_keyboard=True,
-        input_field_placeholder=_('main_kb_place_holder'),
+        input_field_placeholder=_('main_kb_place_holder', locale=locale),
     )
 
 
@@ -68,16 +69,17 @@ def get_keyboard_with_navigation(
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
 
-lang_kb = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text='🇷🇺 Русский', callback_data='set_lang_ru'
-            ),
-            InlineKeyboardButton(
-                text='🇬🇧 English', callback_data='set_lang_en'
-            ),
-        ],
-        [InlineKeyboardButton(text=_('cancel'), callback_data='cancel')],
-    ]
-)
+def get_lang_kb():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='🇷🇺 Русский', callback_data='set_lang_ru'
+                ),
+                InlineKeyboardButton(
+                    text='🇬🇧 English', callback_data='set_lang_en'
+                ),
+            ],
+            [InlineKeyboardButton(text=_('cancel'), callback_data='cancel')],
+        ]
+    )

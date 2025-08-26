@@ -9,5 +9,5 @@ client: AsyncMongoClient = AsyncMongoClient(config.mongo_url)
 
 async def init_db():
     await init_beanie(
-        database=client.test_base, document_models=[User, Product]
+        database=client[config.mongodb.db], document_models=[User, Product]
     )

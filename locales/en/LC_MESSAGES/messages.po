@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-08-25 14:47+0200\n"
+"POT-Creation-Date: 2025-08-25 20:59+0200\n"
 "PO-Revision-Date: 2025-08-24 17:33+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -34,30 +34,34 @@ msgstr "Delete good"
 msgid "check_one"
 msgstr "Check one"
 
-#: src/bot/keyboard.py:25
+#: src/bot/handler/lang.py:19 src/bot/keyboard.py:23
+msgid "language_change"
+msgstr "Change language"
+
+#: src/bot/keyboard.py:26
 msgid "main_kb_place_holder"
 msgstr "Choose a menu item..."
 
-#: src/bot/handler/cmd.py:50 src/bot/handler/cmd.py:54 src/bot/keyboard.py:31
-#: src/bot/keyboard.py:66 src/bot/keyboard.py:81
+#: src/bot/handler/cmd.py:50 src/bot/handler/cmd.py:54 src/bot/keyboard.py:32
+#: src/bot/keyboard.py:67 src/bot/keyboard.py:83
 msgid "cancel"
 msgstr "❌ Отмена"
 
-#: src/bot/keyboard.py:55
+#: src/bot/keyboard.py:56
 msgid "prev_button"
 msgstr "⬅️ prev"
 
-#: src/bot/keyboard.py:59
+#: src/bot/keyboard.py:60
 msgid "next_button"
 msgstr "➡️ next"
 
 #: src/bot/scheduller.py:119
-#, fuzzy
+#
 msgid "ruble_line"
 msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
 
 #: src/bot/scheduller.py:127
-#, fuzzy
+#
 msgid "update_price_message"
 msgstr ""
 "💰 The price of <b>{product}</b> has been updated: <b>{new_price}</b>\n"
@@ -111,7 +115,7 @@ msgstr "This doesn’t look like a link. Please send a valid link."
 
 #: src/bot/handler/check_goods.py:27 src/bot/handler/check_one.py:38
 #: src/bot/handler/delete_good.py:33
-#, fuzzy
+#
 msgid "no_goods_message"
 msgstr "Пока ничего не отслеживается."
 
@@ -120,7 +124,7 @@ msgid "ruble_price_info"
 msgstr "Approximately {rub_price} rubles"
 
 #: src/bot/handler/check_one.py:59 src/bot/handler/delete_good.py:54
-#, fuzzy
+#
 msgid "pagination_message"
 msgstr ""
 "Select a product to view statistics (page {current_page} / {pages}):\n"
@@ -130,17 +134,17 @@ msgstr ""
 #: src/bot/handler/check_one.py:78 src/bot/handler/check_one.py:91
 #: src/bot/handler/delete_good.py:73 src/bot/handler/delete_good.py:86
 #: src/bot/handler/lang.py:30 src/bot/handler/lang.py:34
-#, fuzzy
+#
 msgid "no_message_error"
 msgstr "Error: message is unavailable."
 
 #: src/bot/handler/check_one.py:85
-#, fuzzy
+#
 msgid "check_one_cancel_message"
 msgstr "Statistics view canceled."
 
 #: src/bot/handler/check_one.py:121
-#, fuzzy
+#
 msgid "product_not_found_message"
 msgstr "⚠️ Product with name \"{product_name}\" not found."
 
@@ -149,7 +153,7 @@ msgid "rub_line"
 msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
 
 #: src/bot/handler/check_one.py:137
-#, fuzzy
+#
 msgid "price_info_message"
 msgstr "Failed to get the price from the link."
 
@@ -165,26 +169,26 @@ msgstr ""
 " {sites}"
 
 #: src/bot/handler/delete_good.py:80
-#, fuzzy
+#
 msgid "deletion_canceled_message"
 msgstr "Deletion canceled."
 
 #: src/bot/handler/delete_good.py:116
-#, fuzzy
+#
 msgid "product_deleted_message"
 msgstr "Product \"{product_name}\" has been deleted."
 
 #: src/bot/handler/lang.py:23
-#, fuzzy
+#
 msgid "choose_lang_message"
 msgstr "Choose your language:"
 
 #: src/bot/handler/lang.py:40
-#, fuzzy
+#
 msgid "lang_change_cancel_message"
 msgstr "Language change canceled."
 
 #: src/bot/handler/lang.py:48
-#, fuzzy
+#
 msgid "incorrect_lang_code"
 msgstr "Invalid language code."

@@ -28,7 +28,6 @@ class MongoSettings(BaseModel):
     host: str
     port: int
     db: str
-    collection: str
 
 
 class Secrets(BaseSettings):

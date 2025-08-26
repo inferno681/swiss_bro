@@ -1,26 +1,26 @@
-from aiogram import Router
-from aiogram.filters import Command
+from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, Message
 from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import lazy_gettext as __
 
-from bot.keyboard import get_main_kb, lang_kb
+from bot.keyboard import get_lang_kb, get_main_kb
 from bot.model import User
 from config import config
 
-router = Router()
+router = Router(name='change_language_router')
 
 
 class ChooseLang(StatesGroup):
     waiting_for_lang = State()
 
 
-@router.message(Command('language'))
+@router.message(F.text == __('language_change'))
 async def change_language(message: Message, state: FSMContext):
     """Change language command."""
     await state.set_state(ChooseLang.waiting_for_lang)
-    await message.answer(_('choose_lang_message'), reply_markup=lang_kb)
+    await message.answer(_('choose_lang_message'), reply_markup=get_lang_kb())
 
 
 @router.callback_query(ChooseLang.waiting_for_lang)
@@ -55,5 +55,7 @@ async def choose_language(callback: CallbackQuery, state: FSMContext):
     else:
         text = '✅ Language successfully changed to English.'
     await state.clear()
-    await callback.message.edit_text(text)
-    await callback.answer()
+    await callback.message.delete()
+    await callback.message.answer(
+        text=text, reply_markup=get_main_kb(locale=lang_code)
+    )

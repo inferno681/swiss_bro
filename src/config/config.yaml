@@ -22,4 +22,3 @@ mongodb:
   host: "swissbro.y9tkger.mongodb.net"
   port: 27017
   db: "swiss_bro"
-  collection: "prices"
