@@ -32,6 +32,8 @@ COPY ./src/config  ./src/config
 
 COPY ./src/bot  ./src/bot
 
+COPY ./locales ./locales
+
 ENV PYTHONPATH=/app/src/
 RUN python -m site
 

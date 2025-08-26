@@ -3,6 +3,7 @@ services:
   swiss_bro_bot:
     container_name: swiss_bro_bot
     image: inferno681/swiss_bro_bot:latest
+    init: true
     restart: always
     volumes:
       - ./config.yaml:/app/src/config/config.yaml

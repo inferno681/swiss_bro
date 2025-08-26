@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import sys
+from pathlib import Path
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -19,7 +20,8 @@ from bot.middleware import AdminOnlyMiddleware, DBI18nMiddleware
 from bot.scheduller import set_bot, start_scheduler
 from config import config
 
-i18n = I18n(path='locales', default_locale='en', domain='messages')
+localedir = Path(__file__).resolve().parent.parent.parent / 'locales'
+i18n = I18n(path=localedir, default_locale='en', domain='messages')
 
 
 def setup_bot_and_dispatcher() -> tuple[Bot, Dispatcher]:
