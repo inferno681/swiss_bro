@@ -9,6 +9,7 @@ from aiogram.utils.markdown import hbold
 from bot.constants import ALLOWED_SITES
 from bot.keyboard import get_main_kb
 from bot.model import User
+from config import config
 
 router = Router(name='cmd_router')
 
@@ -37,13 +38,18 @@ async def command_start_handler(message: Message) -> None:
         user.last_name = tg_user.last_name
         user.username = tg_user.username
         user.full_name = tg_user.full_name
+        user.language_code = tg_user.language_code
         user.is_premium = getattr(tg_user, 'is_premium', None)
         await user.save()
+    if tg_user.language_code in config.service.locales:
+        locale = tg_user.language_code
+    else:
+        locale = 'en'
     await message.answer(
         _('start_message').format(
             name=hbold(tg_user.full_name), sites=', \n'.join(ALLOWED_SITES)
         ),
-        reply_markup=get_main_kb(),
+        reply_markup=get_main_kb(locale=locale),
     )
 
 

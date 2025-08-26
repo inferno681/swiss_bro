@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-08-25 20:59+0200\n"
+"POT-Creation-Date: 2025-08-26 11:15+0200\n"
 "PO-Revision-Date: 2025-08-24 17:33+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,31 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
 
-#: src/bot/handler/add_good.py:24 src/bot/keyboard.py:16
-msgid "add_good"
-msgstr "Add good"
-
-#: src/bot/handler/check_goods.py:14 src/bot/keyboard.py:17
-msgid "check_goods"
-msgstr "Check goods"
-
-#: src/bot/handler/delete_good.py:20 src/bot/keyboard.py:20
-msgid "delete_good"
-msgstr "Delete good"
-
-#: src/bot/handler/check_one.py:25 src/bot/keyboard.py:21
-msgid "check_one"
-msgstr "Check one"
-
-#: src/bot/handler/lang.py:19 src/bot/keyboard.py:23
-msgid "language_change"
-msgstr "Change language"
-
-#: src/bot/keyboard.py:26
-msgid "main_kb_place_holder"
-msgstr "Choose a menu item..."
-
-#: src/bot/handler/cmd.py:50 src/bot/handler/cmd.py:54 src/bot/keyboard.py:32
+#: src/bot/handler/cmd.py:56 src/bot/handler/cmd.py:60 src/bot/keyboard.py:32
 #: src/bot/keyboard.py:67 src/bot/keyboard.py:83
 msgid "cancel"
 msgstr "❌ Отмена"
@@ -56,12 +32,10 @@ msgid "next_button"
 msgstr "➡️ next"
 
 #: src/bot/scheduller.py:119
-#
 msgid "ruble_line"
 msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
 
 #: src/bot/scheduller.py:127
-#
 msgid "update_price_message"
 msgstr ""
 "💰 The price of <b>{product}</b> has been updated: <b>{new_price}</b>\n"
@@ -73,6 +47,10 @@ msgstr ""
 "📅 Last update: <b>{updated_at}</b>\n"
 "\n"
 "🔗 <a href=\"{url}\">Go to the website</a>"
+
+#: src/bot/handler/add_good.py:24
+msgid "add_good"
+msgstr "Add good"
 
 #: src/bot/handler/add_good.py:27
 msgid "send_link_message"
@@ -113,9 +91,12 @@ msgstr "Failed to get the price from the link."
 msgid "not_url_message"
 msgstr "This doesn’t look like a link. Please send a valid link."
 
+#: src/bot/handler/check_goods.py:14
+msgid "check_goods"
+msgstr "Check goods"
+
 #: src/bot/handler/check_goods.py:27 src/bot/handler/check_one.py:38
 #: src/bot/handler/delete_good.py:33
-#
 msgid "no_goods_message"
 msgstr "Пока ничего не отслеживается."
 
@@ -123,8 +104,11 @@ msgstr "Пока ничего не отслеживается."
 msgid "ruble_price_info"
 msgstr "Approximately {rub_price} rubles"
 
+#: src/bot/handler/check_one.py:25
+msgid "check_one"
+msgstr "Check one"
+
 #: src/bot/handler/check_one.py:59 src/bot/handler/delete_good.py:54
-#
 msgid "pagination_message"
 msgstr ""
 "Select a product to view statistics (page {current_page} / {pages}):\n"
@@ -134,17 +118,14 @@ msgstr ""
 #: src/bot/handler/check_one.py:78 src/bot/handler/check_one.py:91
 #: src/bot/handler/delete_good.py:73 src/bot/handler/delete_good.py:86
 #: src/bot/handler/lang.py:30 src/bot/handler/lang.py:34
-#
 msgid "no_message_error"
 msgstr "Error: message is unavailable."
 
 #: src/bot/handler/check_one.py:85
-#
 msgid "check_one_cancel_message"
 msgstr "Statistics view canceled."
 
 #: src/bot/handler/check_one.py:121
-#
 msgid "product_not_found_message"
 msgstr "⚠️ Product with name \"{product_name}\" not found."
 
@@ -153,42 +134,48 @@ msgid "rub_line"
 msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
 
 #: src/bot/handler/check_one.py:137
-#
 msgid "price_info_message"
 msgstr "Failed to get the price from the link."
 
-#: src/bot/handler/cmd.py:21
+#: src/bot/handler/cmd.py:22
 msgid "user_not_recognized"
 msgstr "Failed to identify the user 🚫"
 
-#: src/bot/handler/cmd.py:43
+#: src/bot/handler/cmd.py:49
 msgid "start_message"
 msgstr ""
 "Hello, {name}!\n"
 " This bot monitors product prices on the following sites:\n"
 " {sites}"
 
+#: src/bot/handler/delete_good.py:20
+msgid "delete_good"
+msgstr "Delete good"
+
 #: src/bot/handler/delete_good.py:80
-#
 msgid "deletion_canceled_message"
 msgstr "Deletion canceled."
 
 #: src/bot/handler/delete_good.py:116
-#
 msgid "product_deleted_message"
 msgstr "Product \"{product_name}\" has been deleted."
 
+#: src/bot/handler/lang.py:19
+msgid "language_change"
+msgstr "Change language"
+
 #: src/bot/handler/lang.py:23
-#
 msgid "choose_lang_message"
 msgstr "Choose your language:"
 
 #: src/bot/handler/lang.py:40
-#
 msgid "lang_change_cancel_message"
 msgstr "Language change canceled."
 
 #: src/bot/handler/lang.py:48
-#
 msgid "incorrect_lang_code"
 msgstr "Invalid language code."
+
+#~ msgid "main_kb_place_holder"
+#~ msgstr "Choose a menu item..."
+
