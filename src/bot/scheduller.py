@@ -32,7 +32,7 @@ from bot.model import Product, User, UserLocaleProjection
 from bot.parser import get_price
 from config import config
 
-LOCALE_DIR = Path(__file__).parent.parent / 'locales'
+LOCALE_DIR = Path(__file__).resolve().parent.parent.parent / 'locales'
 log = getLogger(__name__)
 
 

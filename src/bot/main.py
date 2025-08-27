@@ -20,8 +20,8 @@ from bot.middleware import AdminOnlyMiddleware, DBI18nMiddleware
 from bot.scheduller import set_bot, start_scheduler
 from config import config
 
-localedir = Path(__file__).resolve().parent.parent.parent / 'locales'
-i18n = I18n(path=localedir, default_locale='en', domain='messages')
+LOCALE_DIR = Path(__file__).resolve().parent.parent.parent / 'locales'
+i18n = I18n(path=LOCALE_DIR, default_locale='en', domain='messages')
 
 
 def setup_bot_and_dispatcher() -> tuple[Bot, Dispatcher]:
