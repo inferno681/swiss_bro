@@ -176,6 +176,6 @@ msgstr "Language change canceled."
 msgid "incorrect_lang_code"
 msgstr "Invalid language code."
 
-#~ msgid "main_kb_place_holder"
-#~ msgstr "Choose a menu item..."
-
+#: src/bot/keyboard.py:26
+msgid "main_kb_place_holder"
+msgstr "Choose a menu item..."

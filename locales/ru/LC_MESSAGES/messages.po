@@ -186,6 +186,6 @@ msgstr "Смена языка отменена."
 msgid "incorrect_lang_code"
 msgstr "Неверный код языка."
 
-#~ msgid "main_kb_place_holder"
-#~ msgstr "Выберите пункт меню..."
-
+#: src/bot/keyboard.py:26
+msgid "main_kb_place_holder"
+msgstr "Выберите пункт меню..."
