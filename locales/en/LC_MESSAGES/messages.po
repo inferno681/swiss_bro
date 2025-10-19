@@ -21,7 +21,7 @@ msgstr ""
 #: src/bot/handler/cmd.py:56 src/bot/handler/cmd.py:60 src/bot/keyboard.py:32
 #: src/bot/keyboard.py:67 src/bot/keyboard.py:83
 msgid "cancel"
-msgstr "❌ Отмена"
+msgstr "❌ cancel"
 
 #: src/bot/keyboard.py:56
 msgid "prev_button"
@@ -98,7 +98,7 @@ msgstr "Check goods"
 #: src/bot/handler/check_goods.py:27 src/bot/handler/check_one.py:38
 #: src/bot/handler/delete_good.py:33
 msgid "no_goods_message"
-msgstr "Пока ничего не отслеживается."
+msgstr "Nothing is being tracked yet."
 
 #: src/bot/handler/check_goods.py:42
 msgid "ruble_price_info"
@@ -135,7 +135,16 @@ msgstr "💵 Approximately <b>{rub_price} ₽</b>\n"
 
 #: src/bot/handler/check_one.py:137
 msgid "price_info_message"
-msgstr "Failed to get the price from the link."
+msgstr ""
+"💰 Price for <b>{product}</b>: <b>{new_price}</b>\n"
+"{rub_line}\n"
+"📉 Lowest price during the period: <b>{min_price}</b>\n"
+"📈 Highest price during the period: <b>{max_price}</b>\n"
+"\n"
+"🕒 Tracking started: <b>{created_at}</b>\n"
+"📅 Last update: <b>{updated_at}</b>\n"
+"\n"
+"🔗 <a href=\"{url}\">Go to website</a>"
 
 #: src/bot/handler/cmd.py:22
 msgid "user_not_recognized"
